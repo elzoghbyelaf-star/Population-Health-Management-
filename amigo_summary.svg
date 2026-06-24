@@ -2,16 +2,16 @@
   <!-- Background -->
   <defs>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#0a1628;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#0d2240;stop-opacity:1" />
+      <stop offset="0%" style="stop-color:#0a1a0f;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0d2415;stop-opacity:1" />
     </linearGradient>
     <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#00c6ff;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#0072ff;stop-opacity:1" />
+      <stop offset="0%" style="stop-color:#00e676;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00c853;stop-opacity:1" />
     </linearGradient>
     <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#112244;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#0d1a33;stop-opacity:1" />
+      <stop offset="0%" style="stop-color:#112a18;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0d1f10;stop-opacity:1" />
     </linearGradient>
     <filter id="glow">
       <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
@@ -29,145 +29,145 @@
   <rect x="60" y="72" width="80" height="2" fill="url(#accentGrad)" rx="1"/>
 
   <!-- Tagline -->
-  <text x="600" y="55" font-size="18" fill="#00c6ff" text-anchor="middle" letter-spacing="6" font-weight="300">POPULATION HEALTH INTELLIGENCE</text>
+  <text x="600" y="55" font-size="18" fill="#00e676" text-anchor="middle" letter-spacing="6" font-weight="300">POPULATION HEALTH INTELLIGENCE</text>
   <text x="600" y="90" font-size="38" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="3">Predict. Prevent. Act.</text>
   <rect x="400" y="100" width="400" height="3" fill="url(#accentGrad)" rx="1"/>
 
   <!-- HIE badge -->
-  <rect x="960" y="40" width="200" height="52" rx="8" fill="none" stroke="#00c6ff" stroke-width="1.5" opacity="0.6"/>
-  <text x="1060" y="62" font-size="11" fill="#00c6ff" text-anchor="middle" letter-spacing="1">INTEGRATED WITH</text>
+  <rect x="960" y="40" width="200" height="52" rx="8" fill="none" stroke="#00e676" stroke-width="1.5" opacity="0.6"/>
+  <text x="1060" y="62" font-size="11" fill="#00e676" text-anchor="middle" letter-spacing="1">INTEGRATED WITH</text>
   <text x="1060" y="82" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">National HIE</text>
 
   <!-- ─── STATS ROW ─── -->
   <!-- Stat 1 -->
-  <rect x="60" y="130" width="220" height="100" rx="12" fill="url(#cardGrad)" stroke="#00c6ff" stroke-width="1" stroke-opacity="0.3"/>
-  <text x="170" y="178" font-size="38" font-weight="800" fill="#00c6ff" text-anchor="middle" filter="url(#glow)">22.2x</text>
-  <text x="170" y="205" font-size="13" fill="#a0b4cc" text-anchor="middle">Return on Investment</text>
+  <rect x="60" y="130" width="220" height="100" rx="12" fill="url(#cardGrad)" stroke="#00e676" stroke-width="1" stroke-opacity="0.3"/>
+  <text x="170" y="178" font-size="38" font-weight="800" fill="#00e676" text-anchor="middle" filter="url(#glow)">22.2x</text>
+  <text x="170" y="205" font-size="13" fill="#a0c4a8" text-anchor="middle">Return on Investment</text>
 
   <!-- Stat 2 -->
-  <rect x="300" y="130" width="220" height="100" rx="12" fill="url(#cardGrad)" stroke="#00c6ff" stroke-width="1" stroke-opacity="0.3"/>
-  <text x="410" y="178" font-size="38" font-weight="800" fill="#00c6ff" text-anchor="middle" filter="url(#glow)">6M+</text>
-  <text x="410" y="205" font-size="13" fill="#a0b4cc" text-anchor="middle">Patient Interactions</text>
+  <rect x="300" y="130" width="220" height="100" rx="12" fill="url(#cardGrad)" stroke="#00e676" stroke-width="1" stroke-opacity="0.3"/>
+  <text x="410" y="178" font-size="38" font-weight="800" fill="#00e676" text-anchor="middle" filter="url(#glow)">6M+</text>
+  <text x="410" y="205" font-size="13" fill="#a0c4a8" text-anchor="middle">Patient Interactions</text>
 
   <!-- Stat 3 -->
-  <rect x="540" y="130" width="220" height="100" rx="12" fill="url(#cardGrad)" stroke="#00c6ff" stroke-width="1" stroke-opacity="0.3"/>
-  <text x="650" y="178" font-size="38" font-weight="800" fill="#00c6ff" text-anchor="middle" filter="url(#glow)">6 wks</text>
-  <text x="650" y="205" font-size="13" fill="#a0b4cc" text-anchor="middle">To Full Deployment</text>
+  <rect x="540" y="130" width="220" height="100" rx="12" fill="url(#cardGrad)" stroke="#00e676" stroke-width="1" stroke-opacity="0.3"/>
+  <text x="650" y="178" font-size="38" font-weight="800" fill="#00e676" text-anchor="middle" filter="url(#glow)">6 wks</text>
+  <text x="650" y="205" font-size="13" fill="#a0c4a8" text-anchor="middle">To Full Deployment</text>
 
   <!-- Stat 4 -->
-  <rect x="780" y="130" width="220" height="100" rx="12" fill="url(#cardGrad)" stroke="#00c6ff" stroke-width="1" stroke-opacity="0.3"/>
-  <text x="890" y="178" font-size="38" font-weight="800" fill="#00c6ff" text-anchor="middle" filter="url(#glow)">100%</text>
-  <text x="890" y="205" font-size="13" fill="#a0b4cc" text-anchor="middle">Hospital Coverage</text>
+  <rect x="780" y="130" width="220" height="100" rx="12" fill="url(#cardGrad)" stroke="#00e676" stroke-width="1" stroke-opacity="0.3"/>
+  <text x="890" y="178" font-size="38" font-weight="800" fill="#00e676" text-anchor="middle" filter="url(#glow)">100%</text>
+  <text x="890" y="205" font-size="13" fill="#a0c4a8" text-anchor="middle">Hospital Coverage</text>
 
   <!-- Stat 5 -->
-  <rect x="1020" y="130" width="140" height="100" rx="12" fill="url(#cardGrad)" stroke="#00c6ff" stroke-width="1" stroke-opacity="0.3"/>
-  <text x="1090" y="173" font-size="28" font-weight="800" fill="#00c6ff" text-anchor="middle" filter="url(#glow)">8</text>
-  <text x="1090" y="195" font-size="11" fill="#a0b4cc" text-anchor="middle">Clinical Focus</text>
-  <text x="1090" y="212" font-size="11" fill="#a0b4cc" text-anchor="middle">Areas</text>
+  <rect x="1020" y="130" width="140" height="100" rx="12" fill="url(#cardGrad)" stroke="#00e676" stroke-width="1" stroke-opacity="0.3"/>
+  <text x="1090" y="173" font-size="28" font-weight="800" fill="#00e676" text-anchor="middle" filter="url(#glow)">8</text>
+  <text x="1090" y="195" font-size="11" fill="#a0c4a8" text-anchor="middle">Clinical Focus</text>
+  <text x="1090" y="212" font-size="11" fill="#a0c4a8" text-anchor="middle">Areas</text>
 
   <!-- ─── AI AGENTS SECTION ─── -->
-  <text x="60" y="278" font-size="14" fill="#00c6ff" letter-spacing="3" font-weight="600">AI AGENT ARCHITECTURE</text>
+  <text x="60" y="278" font-size="14" fill="#00e676" letter-spacing="3" font-weight="600">AI AGENT ARCHITECTURE</text>
 
   <!-- Agent cards -->
   <!-- Agent 1: Observation -->
-  <rect x="60" y="292" width="200" height="110" rx="10" fill="url(#cardGrad)" stroke="#0072ff" stroke-width="1.5"/>
-  <circle cx="90" cy="325" r="16" fill="#0072ff" opacity="0.2"/>
-  <text x="90" y="330" font-size="16" fill="#00c6ff" text-anchor="middle">◎</text>
+  <rect x="60" y="292" width="200" height="110" rx="10" fill="url(#cardGrad)" stroke="#00c853" stroke-width="1.5"/>
+  <circle cx="90" cy="325" r="16" fill="#00c853" opacity="0.2"/>
+  <text x="90" y="330" font-size="16" fill="#00e676" text-anchor="middle">◎</text>
   <text x="140" y="323" font-size="14" font-weight="700" fill="#ffffff">Observation</text>
-  <text x="75" y="345" font-size="11" fill="#7a9ab5">Live population</text>
-  <text x="75" y="360" font-size="11" fill="#7a9ab5">surveillance 24/7</text>
-  <text x="75" y="385" font-size="10" fill="#00c6ff" font-style="italic">Real-time alerts</text>
+  <text x="75" y="345" font-size="11" fill="#6a9a75">Live population</text>
+  <text x="75" y="360" font-size="11" fill="#6a9a75">surveillance 24/7</text>
+  <text x="75" y="385" font-size="10" fill="#00e676" font-style="italic">Real-time alerts</text>
 
   <!-- Agent 2: Risk -->
-  <rect x="274" y="292" width="200" height="110" rx="10" fill="url(#cardGrad)" stroke="#0072ff" stroke-width="1.5"/>
-  <circle cx="304" cy="325" r="16" fill="#0072ff" opacity="0.2"/>
-  <text x="304" y="330" font-size="16" fill="#00c6ff" text-anchor="middle">⚡</text>
+  <rect x="274" y="292" width="200" height="110" rx="10" fill="url(#cardGrad)" stroke="#00c853" stroke-width="1.5"/>
+  <circle cx="304" cy="325" r="16" fill="#00c853" opacity="0.2"/>
+  <text x="304" y="330" font-size="16" fill="#00e676" text-anchor="middle">⚡</text>
   <text x="354" y="323" font-size="14" font-weight="700" fill="#ffffff">Risk Stratification</text>
-  <text x="289" y="345" font-size="11" fill="#7a9ab5">Identify high-risk</text>
-  <text x="289" y="360" font-size="11" fill="#7a9ab5">patients before crisis</text>
-  <text x="289" y="385" font-size="10" fill="#00c6ff" font-style="italic">Predictive scoring</text>
+  <text x="289" y="345" font-size="11" fill="#6a9a75">Identify high-risk</text>
+  <text x="289" y="360" font-size="11" fill="#6a9a75">patients before crisis</text>
+  <text x="289" y="385" font-size="10" fill="#00e676" font-style="italic">Predictive scoring</text>
 
   <!-- Agent 3: Simulation -->
-  <rect x="488" y="292" width="200" height="110" rx="10" fill="url(#cardGrad)" stroke="#0072ff" stroke-width="1.5"/>
-  <circle cx="518" cy="325" r="16" fill="#0072ff" opacity="0.2"/>
-  <text x="518" y="330" font-size="16" fill="#00c6ff" text-anchor="middle">⟳</text>
+  <rect x="488" y="292" width="200" height="110" rx="10" fill="url(#cardGrad)" stroke="#00c853" stroke-width="1.5"/>
+  <circle cx="518" cy="325" r="16" fill="#00c853" opacity="0.2"/>
+  <text x="518" y="330" font-size="16" fill="#00e676" text-anchor="middle">⟳</text>
   <text x="568" y="323" font-size="14" font-weight="700" fill="#ffffff">Simulation</text>
-  <text x="503" y="345" font-size="11" fill="#7a9ab5">Forecast intervention</text>
-  <text x="503" y="360" font-size="11" fill="#7a9ab5">outcomes in advance</text>
-  <text x="503" y="385" font-size="10" fill="#00c6ff" font-style="italic">Digital twin engine</text>
+  <text x="503" y="345" font-size="11" fill="#6a9a75">Forecast intervention</text>
+  <text x="503" y="360" font-size="11" fill="#6a9a75">outcomes in advance</text>
+  <text x="503" y="385" font-size="10" fill="#00e676" font-style="italic">Digital twin engine</text>
 
   <!-- Agent 4: Campaign -->
-  <rect x="702" y="292" width="200" height="110" rx="10" fill="url(#cardGrad)" stroke="#0072ff" stroke-width="1.5"/>
-  <circle cx="732" cy="325" r="16" fill="#0072ff" opacity="0.2"/>
-  <text x="732" y="330" font-size="16" fill="#00c6ff" text-anchor="middle">▶</text>
+  <rect x="702" y="292" width="200" height="110" rx="10" fill="url(#cardGrad)" stroke="#00c853" stroke-width="1.5"/>
+  <circle cx="732" cy="325" r="16" fill="#00c853" opacity="0.2"/>
+  <text x="732" y="330" font-size="16" fill="#00e676" text-anchor="middle">▶</text>
   <text x="782" y="323" font-size="14" font-weight="700" fill="#ffffff">Campaign Tracking</text>
-  <text x="717" y="345" font-size="11" fill="#7a9ab5">Monitor programs</text>
-  <text x="717" y="360" font-size="11" fill="#7a9ab5">with live dashboards</text>
-  <text x="717" y="385" font-size="10" fill="#00c6ff" font-style="italic">Closed-loop action</text>
+  <text x="717" y="345" font-size="11" fill="#6a9a75">Monitor programs</text>
+  <text x="717" y="360" font-size="11" fill="#6a9a75">with live dashboards</text>
+  <text x="717" y="385" font-size="10" fill="#00e676" font-style="italic">Closed-loop action</text>
 
   <!-- Agent 5: Patient Profile -->
-  <rect x="916" y="292" width="244" height="110" rx="10" fill="url(#cardGrad)" stroke="#0072ff" stroke-width="1.5"/>
-  <circle cx="946" cy="325" r="16" fill="#0072ff" opacity="0.2"/>
-  <text x="946" y="330" font-size="16" fill="#00c6ff" text-anchor="middle">♡</text>
+  <rect x="916" y="292" width="244" height="110" rx="10" fill="url(#cardGrad)" stroke="#00c853" stroke-width="1.5"/>
+  <circle cx="946" cy="325" r="16" fill="#00c853" opacity="0.2"/>
+  <text x="946" y="330" font-size="16" fill="#00e676" text-anchor="middle">♡</text>
   <text x="996" y="323" font-size="14" font-weight="700" fill="#ffffff">Patient Profile</text>
-  <text x="931" y="345" font-size="11" fill="#7a9ab5">360° longitudinal view</text>
-  <text x="931" y="360" font-size="11" fill="#7a9ab5">per individual patient</text>
-  <text x="931" y="385" font-size="10" fill="#00c6ff" font-style="italic">HIE-powered</text>
+  <text x="931" y="345" font-size="11" fill="#6a9a75">360° longitudinal view</text>
+  <text x="931" y="360" font-size="11" fill="#6a9a75">per individual patient</text>
+  <text x="931" y="385" font-size="10" fill="#00e676" font-style="italic">HIE-powered</text>
 
   <!-- ─── CLINICAL FOCUS AREAS ─── -->
-  <text x="60" y="445" font-size="14" fill="#00c6ff" letter-spacing="3" font-weight="600">8 CLINICAL FOCUS AREAS</text>
+  <text x="60" y="445" font-size="14" fill="#00e676" letter-spacing="3" font-weight="600">8 CLINICAL FOCUS AREAS</text>
 
-  <rect x="60" y="458" width="130" height="36" rx="18" fill="#112244" stroke="#00c6ff" stroke-width="1" stroke-opacity="0.5"/>
-  <text x="125" y="481" font-size="12" fill="#cce4ff" text-anchor="middle">Obesity</text>
+  <rect x="60" y="458" width="130" height="36" rx="18" fill="#112a18" stroke="#00e676" stroke-width="1" stroke-opacity="0.5"/>
+  <text x="125" y="481" font-size="12" fill="#ccf0d8" text-anchor="middle">Obesity</text>
 
-  <rect x="204" y="458" width="130" height="36" rx="18" fill="#112244" stroke="#00c6ff" stroke-width="1" stroke-opacity="0.5"/>
-  <text x="269" y="481" font-size="12" fill="#cce4ff" text-anchor="middle">Diabetes</text>
+  <rect x="204" y="458" width="130" height="36" rx="18" fill="#112a18" stroke="#00e676" stroke-width="1" stroke-opacity="0.5"/>
+  <text x="269" y="481" font-size="12" fill="#ccf0d8" text-anchor="middle">Diabetes</text>
 
-  <rect x="348" y="458" width="130" height="36" rx="18" fill="#112244" stroke="#00c6ff" stroke-width="1" stroke-opacity="0.5"/>
-  <text x="413" y="481" font-size="12" fill="#cce4ff" text-anchor="middle">Hypertension</text>
+  <rect x="348" y="458" width="130" height="36" rx="18" fill="#112a18" stroke="#00e676" stroke-width="1" stroke-opacity="0.5"/>
+  <text x="413" y="481" font-size="12" fill="#ccf0d8" text-anchor="middle">Hypertension</text>
 
-  <rect x="492" y="458" width="150" height="36" rx="18" fill="#112244" stroke="#00c6ff" stroke-width="1" stroke-opacity="0.5"/>
-  <text x="567" y="481" font-size="12" fill="#cce4ff" text-anchor="middle">Breast Cancer</text>
+  <rect x="492" y="458" width="150" height="36" rx="18" fill="#112a18" stroke="#00e676" stroke-width="1" stroke-opacity="0.5"/>
+  <text x="567" y="481" font-size="12" fill="#ccf0d8" text-anchor="middle">Breast Cancer</text>
 
-  <rect x="656" y="458" width="160" height="36" rx="18" fill="#112244" stroke="#00c6ff" stroke-width="1" stroke-opacity="0.5"/>
-  <text x="736" y="481" font-size="12" fill="#cce4ff" text-anchor="middle">Cervical Cancer</text>
+  <rect x="656" y="458" width="160" height="36" rx="18" fill="#112a18" stroke="#00e676" stroke-width="1" stroke-opacity="0.5"/>
+  <text x="736" y="481" font-size="12" fill="#ccf0d8" text-anchor="middle">Cervical Cancer</text>
 
-  <rect x="830" y="458" width="170" height="36" rx="18" fill="#112244" stroke="#00c6ff" stroke-width="1" stroke-opacity="0.5"/>
-  <text x="915" y="481" font-size="12" fill="#cce4ff" text-anchor="middle">Colorectal Cancer</text>
+  <rect x="830" y="458" width="170" height="36" rx="18" fill="#112a18" stroke="#00e676" stroke-width="1" stroke-opacity="0.5"/>
+  <text x="915" y="481" font-size="12" fill="#ccf0d8" text-anchor="middle">Colorectal Cancer</text>
 
-  <rect x="60" y="504" width="150" height="36" rx="18" fill="#112244" stroke="#00c6ff" stroke-width="1" stroke-opacity="0.5"/>
-  <text x="135" y="527" font-size="12" fill="#cce4ff" text-anchor="middle">Thyroid Cancer</text>
+  <rect x="60" y="504" width="150" height="36" rx="18" fill="#112a18" stroke="#00e676" stroke-width="1" stroke-opacity="0.5"/>
+  <text x="135" y="527" font-size="12" fill="#ccf0d8" text-anchor="middle">Thyroid Cancer</text>
 
-  <rect x="224" y="504" width="130" height="36" rx="18" fill="#112244" stroke="#00c6ff" stroke-width="1" stroke-opacity="0.5"/>
-  <text x="289" y="527" font-size="12" fill="#cce4ff" text-anchor="middle">Fertility</text>
+  <rect x="224" y="504" width="130" height="36" rx="18" fill="#112a18" stroke="#00e676" stroke-width="1" stroke-opacity="0.5"/>
+  <text x="289" y="527" font-size="12" fill="#ccf0d8" text-anchor="middle">Fertility</text>
 
   <!-- ─── BOTTOM SECTION ─── -->
   <!-- Why Amigo -->
-  <rect x="60" y="568" width="500" height="180" rx="14" fill="url(#cardGrad)" stroke="#00c6ff" stroke-width="1" stroke-opacity="0.2"/>
-  <text x="90" y="598" font-size="14" font-weight="700" fill="#00c6ff" letter-spacing="2">WHY AMIGO</text>
-  <text x="90" y="625" font-size="13" fill="#cce4ff">✦  Not dashboards — AI agents that act</text>
-  <text x="90" y="650" font-size="13" fill="#cce4ff">✦  Built on billions of longitudinal health records</text>
-  <text x="90" y="675" font-size="13" fill="#cce4ff">✦  Clinical + administrative intelligence unified</text>
-  <text x="90" y="700" font-size="13" fill="#cce4ff">✦  NLP engine processing 2,000+ papers/month</text>
-  <text x="90" y="725" font-size="13" fill="#cce4ff">✦  Proven at scale — ready to expand nationally</text>
+  <rect x="60" y="568" width="500" height="180" rx="14" fill="url(#cardGrad)" stroke="#00e676" stroke-width="1" stroke-opacity="0.2"/>
+  <text x="90" y="598" font-size="14" font-weight="700" fill="#00e676" letter-spacing="2">WHY AMIGO</text>
+  <text x="90" y="625" font-size="13" fill="#ccf0d8">✦  Not dashboards — AI agents that act</text>
+  <text x="90" y="650" font-size="13" fill="#ccf0d8">✦  Built on billions of longitudinal health records</text>
+  <text x="90" y="675" font-size="13" fill="#ccf0d8">✦  Clinical + administrative intelligence unified</text>
+  <text x="90" y="700" font-size="13" fill="#ccf0d8">✦  NLP engine processing 2,000+ papers/month</text>
+  <text x="90" y="725" font-size="13" fill="#ccf0d8">✦  Proven at scale — ready to expand nationally</text>
 
   <!-- Trust / Compliance -->
-  <rect x="580" y="568" width="240" height="180" rx="14" fill="url(#cardGrad)" stroke="#00c6ff" stroke-width="1" stroke-opacity="0.2"/>
-  <text x="610" y="598" font-size="14" font-weight="700" fill="#00c6ff" letter-spacing="2">COMPLIANCE</text>
-  <text x="610" y="628" font-size="13" fill="#cce4ff">🔒  SOC 2 Type II</text>
-  <text x="610" y="655" font-size="13" fill="#cce4ff">🔒  HIPAA Certified</text>
-  <text x="610" y="682" font-size="13" fill="#cce4ff">🔒  GDPR Compliant</text>
-  <text x="610" y="709" font-size="13" fill="#cce4ff">🔒  Local Data Residency</text>
-  <text x="610" y="736" font-size="11" fill="#5a7a99">Backed by General Catalyst · Madrona</text>
+  <rect x="580" y="568" width="240" height="180" rx="14" fill="url(#cardGrad)" stroke="#00e676" stroke-width="1" stroke-opacity="0.2"/>
+  <text x="610" y="598" font-size="14" font-weight="700" fill="#00e676" letter-spacing="2">COMPLIANCE</text>
+  <text x="610" y="628" font-size="13" fill="#ccf0d8">🔒  SOC 2 Type II</text>
+  <text x="610" y="655" font-size="13" fill="#ccf0d8">🔒  HIPAA Certified</text>
+  <text x="610" y="682" font-size="13" fill="#ccf0d8">🔒  GDPR Compliant</text>
+  <text x="610" y="709" font-size="13" fill="#ccf0d8">🔒  Local Data Residency</text>
+  <text x="610" y="736" font-size="11" fill="#4a7a55">Backed by General Catalyst · Madrona</text>
 
   <!-- CTA -->
-  <rect x="840" y="568" width="320" height="180" rx="14" fill="#0a2a5e" stroke="#00c6ff" stroke-width="2"/>
-  <text x="1000" y="615" font-size="14" fill="#a0c4e8" text-anchor="middle" letter-spacing="2">READY TO TRANSFORM</text>
+  <rect x="840" y="568" width="320" height="180" rx="14" fill="#0a2a12" stroke="#00e676" stroke-width="2"/>
+  <text x="1000" y="615" font-size="14" fill="#a0c4a8" text-anchor="middle" letter-spacing="2">READY TO TRANSFORM</text>
   <text x="1000" y="645" font-size="18" font-weight="800" fill="#ffffff" text-anchor="middle">National Population</text>
   <text x="1000" y="670" font-size="18" font-weight="800" fill="#ffffff" text-anchor="middle">Health Outcomes</text>
   <rect x="880" y="690" width="240" height="40" rx="20" fill="url(#accentGrad)"/>
   <text x="1000" y="716" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">Let's Meet →</text>
-  <text x="1000" y="740" font-size="11" fill="#5a7a99" text-anchor="middle">elzoghby.elaf@amigo.ai</text>
+  <text x="1000" y="740" font-size="11" fill="#4a7a55" text-anchor="middle">elzoghby.elaf@amigo.ai</text>
 
   <!-- Bottom line -->
   <rect x="0" y="796" width="1200" height="4" fill="url(#accentGrad)"/>
