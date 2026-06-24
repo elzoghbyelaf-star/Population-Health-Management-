@@ -25,19 +25,31 @@
   <rect x="0" y="0" width="1200" height="4" fill="url(#accentGrad)"/>
 
   <!-- Logo / Brand — Amigo logo recreation -->
-  <g transform="translate(48, 28) scale(0.72)">
-    <!-- Stacked card layers (back to front) -->
-    <rect x="0" y="28" width="58" height="38" rx="8" fill="#ffffff" opacity="0.18" transform="rotate(-8,29,47)"/>
-    <rect x="0" y="22" width="58" height="38" rx="8" fill="#ffffff" opacity="0.28" transform="rotate(-4,29,41)"/>
-    <rect x="0" y="16" width="58" height="38" rx="8" fill="#ffffff" opacity="0.45" transform="rotate(0,29,35)"/>
-    <rect x="0" y="10" width="58" height="38" rx="8" fill="#ffffff" opacity="0.85" transform="rotate(4,29,29)"/>
-    <!-- Inner detail lines on top card -->
-    <rect x="6" y="16" width="36" height="5" rx="2.5" fill="#2e2810" opacity="0.5" transform="rotate(4,29,29)"/>
-    <rect x="6" y="26" width="28" height="5" rx="2.5" fill="#2e2810" opacity="0.35" transform="rotate(4,29,29)"/>
+  <g transform="translate(52, 30)">
+    <!-- 4 stacked dark rounded rectangles, fanning slightly -->
+    <!-- Card 4 (bottom/back) - most rotated clockwise -->
+    <g transform="rotate(12, 30, 30)">
+      <rect x="4" y="8" width="52" height="40" rx="9" fill="#1a1508" stroke="#f59e0b" stroke-width="1.2" opacity="0.6"/>
+    </g>
+    <!-- Card 3 -->
+    <g transform="rotate(6, 30, 30)">
+      <rect x="4" y="8" width="52" height="40" rx="9" fill="#2a2008" stroke="#f59e0b" stroke-width="1.2" opacity="0.75"/>
+    </g>
+    <!-- Card 2 -->
+    <g transform="rotate(-4, 30, 30)">
+      <rect x="4" y="8" width="52" height="40" rx="9" fill="#3a3010" stroke="#f59e0b" stroke-width="1.2" opacity="0.88"/>
+    </g>
+    <!-- Card 1 (top/front) - slight counter-clockwise -->
+    <g transform="rotate(-12, 30, 30)">
+      <rect x="4" y="8" width="52" height="40" rx="9" fill="#4a3e14" stroke="#f59e0b" stroke-width="1.5"/>
+      <!-- Two horizontal lines on front card -->
+      <rect x="14" y="21" width="30" height="5" rx="2.5" fill="#f59e0b" opacity="0.7"/>
+      <rect x="14" y="31" width="22" height="5" rx="2.5" fill="#f59e0b" opacity="0.45"/>
+    </g>
   </g>
   <!-- Amigo wordmark in serif style -->
-  <text x="118" y="67" font-size="36" font-weight="400" fill="#ffffff" letter-spacing="1" font-family="Georgia, 'Times New Roman', serif">Amigo</text>
-  <rect x="118" y="74" width="88" height="2" fill="url(#accentGrad)" rx="1"/>
+  <text x="130" y="67" font-size="36" font-weight="400" fill="#ffffff" letter-spacing="1" font-family="Georgia, 'Times New Roman', serif">Amigo</text>
+  <rect x="130" y="74" width="88" height="2" fill="url(#accentGrad)" rx="1"/>
 
   <!-- Tagline -->
   <text x="600" y="55" font-size="18" fill="#f59e0b" text-anchor="middle" letter-spacing="6" font-weight="300">POPULATION HEALTH INTELLIGENCE</text>
