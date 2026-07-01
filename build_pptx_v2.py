@@ -255,7 +255,7 @@ logo_placeholder(sl, Inches(0.45), Inches(0.22))
 txt(sl, "Fakeeh Care Group at a Glance",
     Inches(0.45), Inches(0.62), Inches(9.0), Inches(0.6),
     size=26, bold=False, color=WHITE)
-txt(sl, "Saudi Arabia's leading private healthcare conglomerate — founded 1978, listed 2024.",
+txt(sl, "Dubai-based private healthcare conglomerate with regional leadership — founded 1978, listed 2024.",
     Inches(0.45), Inches(1.2), Inches(9.5), Inches(0.38),
     size=12, color=LIGHT_GR, italic=True)
 rect(sl, Inches(0.45), Inches(1.65), Inches(12.4), Inches(0.02), fill=rgb(0x2A,0x4A,0x60))
@@ -282,20 +282,20 @@ for i,(num,sub,lbl) in enumerate(kpis):
 # Two info panels
 for ci, (heading, bullets) in enumerate([
     ("Established Excellence", [
-        "→  Founded 1978 by Dr. Soliman Fakeeh — Jeddah's first private hospital",
+        "→  Founded 1978 by Dr. Soliman Fakeeh — Saudi Arabia's first private hospital",
         "→  JCI Accredited 6th consecutive time | ANCC Magnet Nursing Recognition",
-        "→  CAP Lab: zero deficiencies | CEBAHI & Saudi Commission accredited",
-        "→  #1 private hospital in Saudi Arabia — Newsweek 2022–2025",
-        "→  First private-sector robotic surgery program in Saudi Arabia",
-        "→  Largest NICU in Western Province | 1st IVF & 1st heart transplant (West KSA)",
+        "→  CAP Lab: zero deficiencies | CEBAHI accredited",
+        "→  Fakeeh University Hospital — flagship Dubai facility (Dubai Silicon Oasis)",
+        "→  First private-sector robotic surgery program in the GCC",
+        "→  Medicentres acquisition — 22-clinic primary care network across Dubai & UAE",
     ]),
     ("Ambitious Growth Agenda", [
         "→  Target: 7 hospitals · 1,675 beds · 9 medical centers by 2028",
-        "→  HEAL Hospital (SAR 461M Neuroscience centre) — construction 2025",
-        "→  DSFH Madinah opened 2025 — city's first advanced oncology centre",
-        "→  Acquired Saudia Airlines Medical Services (KSA's 1st govt. privatization)",
-        "→  SAR 938M Alinma Bank credit facility secured for expansion",
-        "→  UAE: Fakeeh University Hospital + Medicentres acquisition (Dubai)",
+        "→  HEAL Hospital (AED 500M+ Neuroscience centre) — construction underway 2025",
+        "→  Expanding oncology & tertiary care across Dubai and the Northern Emirates",
+        "→  Partnership with Dubai Health Authority & DHA-accredited facilities",
+        "→  AED credit facility secured for GCC-wide expansion",
+        "→  Headquarters: Dubai Silicon Oasis — positioned as UAE's healthcare hub",
     ]),
 ]):
     x = Inches(0.4 + ci*6.5)
@@ -337,7 +337,7 @@ pain_data = [
      "1.89M discharges annually. Systematically following up every patient for medication adherence and recovery is operationally impossible at current staffing.",
      "$200 lost per unfilled visit from no-shows"),
     ("High Costs",        "Multi-Language Patient Population",
-     "Jeddah serves a diverse population requiring care in Arabic dialects, English, Urdu, Tagalog and more — across all Fakeeh facilities.",
+     "Dubai serves a diverse population requiring care in Arabic, English, Urdu, Tagalog, Hindi and more — across all Fakeeh facilities.",
      "2 hours wasted per hour of patient care"),
     ("High Turnover",     "Rapid Multi-Site Expansion",
      "Scaling 4→7 hospitals and 9 medical centers by 2028 means replicating patient engagement operations without a scalable digital model.",
@@ -441,10 +441,10 @@ txt(sl, "One patient, every touchpoint.",
 # Patient scenario box
 rect(sl, Inches(7.3), Inches(0.18), Inches(5.6), Inches(1.2), fill=CREAM,
      line=LIGHT_GR, lw=Pt(1))
-txt(sl, "Ahmed's chronic care journey at Fakeeh",
+txt(sl, "Ahmed's chronic care journey at Fakeeh University Hospital, Dubai",
     Inches(7.5), Inches(0.26), Inches(5.2), Inches(0.38),
     size=11, bold=True, color=NEAR_BLK, italic=True)
-txt(sl, "Ahmed, 58  ·  Diabetic & hypertensive  ·  Regular DSFH Jeddah patient",
+txt(sl, "Ahmed, 58  ·  Diabetic & hypertensive  ·  Regular Fakeeh University Hospital patient, Dubai",
     Inches(7.5), Inches(0.63), Inches(5.2), Inches(0.38),
     size=9, color=MID_GR)
 txt(sl, "Powered by Amigo",
@@ -463,9 +463,9 @@ for i,(stage,x) in enumerate(zip(stages,stage_x)):
 
 # Amigo speech bubbles
 amigo_msgs = [
-    '"Ahmed, you\'re overdue for a diabetes check. I\'ve found a slot Thursday at DSFH. Want me to book it?"',
+    '"Ahmed, you\'re overdue for a diabetes check. I\'ve found a slot Thursday at Fakeeh University Hospital. Want me to book it?"',
     '"Your appointment is tomorrow. Any new symptoms for Dr. Al-Rashidi? Here\'s what to bring..."',
-    "Dr. Al-Rashidi reviews Ahmed's full history, flagged care gaps, and new HbA1c concerns before entering.",
+    "Dr. Al-Mansoori reviews Ahmed's full history, flagged care gaps, and new HbA1c concerns before entering.",
     '"Your A1C is 7.2 — manageable! Dr. Al-Rashidi has started you on adjusted Metformin. Dietitian booked for next week."',
     '"You hit your 8,000 steps goal yesterday! How\'s the new Metformin dose feeling? Any stomach issues?"',
 ]
@@ -560,7 +560,7 @@ for i,row in enumerate(rows):
 rect(sl, Inches(0.45), Inches(7.0), Inches(12.4), Inches(0.38),
      fill=rgb(0xF5,0xEC,0xE8), line=RUST, lw=Pt(1))
 txt(sl,
-    "🇸🇦  Amigo has an active partnership with Heal (KSA/UAE) — proven GCC deployment track. Arabic-first, 100+ languages, HIPAA · SOC 2 · GDPR compliant.",
+    "🇦🇪  Amigo has an active partnership with Heal (UAE/GCC) — proven regional deployment track. Arabic-first, 100+ languages, HIPAA · SOC 2 · GDPR compliant.",
     Inches(0.62), Inches(7.02), Inches(12.1), Inches(0.34),
     size=9, color=RUST2)
 
