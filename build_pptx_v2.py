@@ -237,11 +237,6 @@ for i,(num,tag,lbl) in enumerate(stat_data):
     txt(sl, lbl, Inches(7.55), y+Inches(0.6), Inches(4.8), Inches(0.32),
         size=9, color=MID_GR)
 
-# Footer
-rect(sl, 0, Inches(7.15), W, Inches(0.35), fill=RUST)
-txt(sl, "amigo.ai  ·  Backed by General Catalyst, GSV Ventures, Madrona Ventures & United Healthcare  ·  $20M raised",
-    Inches(0.4), Inches(7.18), Inches(12.5), Inches(0.28),
-    size=8, color=WHITE, align=PP_ALIGN.CENTER)
 
 # ═══════════════════════════════════════════════════════════
 # SLIDE 3 — FAKEEH AT A GLANCE
@@ -307,9 +302,6 @@ for ci, (heading, bullets) in enumerate([
     mtxt(sl, bullets, x+Inches(0.18), Inches(3.98), Inches(5.85), Inches(3.1),
          size=9.5, color=LIGHT_GR, sp=Pt(4))
 
-rect(sl, 0, Inches(7.15), W, Inches(0.35), fill=RUST)
-txt(sl, "amigo.ai", Inches(0.4), Inches(7.18), Inches(12.5), Inches(0.28),
-    size=8, color=WHITE, align=PP_ALIGN.CENTER)
 
 # ═══════════════════════════════════════════════════════════
 # SLIDE 4 — CHALLENGES FAKEEH FACES
@@ -366,9 +358,6 @@ for i,(tag,title,desc,cost) in enumerate(pain_data):
     txt(sl, cost, x+Inches(0.14), y+Inches(2.17), Inches(3.82), Inches(0.28),
         size=7.5, color=RUST_LT)
 
-rect(sl, 0, Inches(7.15), W, Inches(0.35), fill=RUST)
-txt(sl, "amigo.ai", Inches(0.4), Inches(7.18), Inches(12.5), Inches(0.28),
-    size=8, color=WHITE, align=PP_ALIGN.CENTER)
 
 # ═══════════════════════════════════════════════════════════
 # SLIDE 5 — HOW AMIGO TRANSFORMS THE PATIENT JOURNEY
@@ -421,9 +410,6 @@ for i,(num,title,desc) in enumerate(use_cases):
     txt(sl, desc, x+Inches(0.14), y+Inches(1.0), Inches(2.82), Inches(1.35),
         size=8.5, color=rgb(0xFF,0xDD,0xD5))
 
-rect(sl, 0, Inches(7.15), W, Inches(0.35), fill=RUST2)
-txt(sl, "amigo.ai", Inches(0.4), Inches(7.18), Inches(12.5), Inches(0.28),
-    size=8, color=rgb(0xFF,0xCC,0xBB), align=PP_ALIGN.CENTER)
 
 # ═══════════════════════════════════════════════════════════
 # SLIDE 6 — ONE PATIENT, EVERY TOUCHPOINT (Fakeeh version)
