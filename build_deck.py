@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-Amigo x Cleveland Diagnostics — partnership opportunity deck.
-Theme matched to amigo_summary.svg (navy #1E3A8A + sky #0EA5E9, white cards,
-soft shadows, pill tags, stat tiles, "Population Health Intelligence").
+Amigo x Cleveland Diagnostics — partnership deck.
+Theme matched pixel-for-pixel to Amigo's own 'Population Health Intelligence'
+deck: warm cream paper, Didone serif display, terracotta + navy accents,
+letter-spaced monospace eyebrows/labels, near-flat cards, navy closing slide.
 """
 from pptx import Presentation
 from pptx.util import Inches, Pt, Emu
@@ -10,24 +11,23 @@ from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 from pptx.enum.shapes import MSO_SHAPE
 from pptx.oxml.ns import qn
-import copy
 
-# ---- Brand palette (from amigo_summary.svg) ----
-NAVY      = RGBColor(0x1E, 0x3A, 0x8A)
-SKY       = RGBColor(0x0E, 0xA5, 0xE9)
-BG1       = RGBColor(0xF8, 0xFA, 0xFF)
-BG2       = RGBColor(0xEE, 0xF2, 0xFB)
-CARD_TOP  = RGBColor(0xFF, 0xFF, 0xFF)
-CARD_BOT  = RGBColor(0xF0, 0xF5, 0xFF)
-WHITE     = RGBColor(0xFF, 0xFF, 0xFF)
-INK       = RGBColor(0x33, 0x41, 0x55)   # body text
-MUTE      = RGBColor(0x64, 0x74, 0x8B)   # secondary
-FAINT     = RGBColor(0x94, 0xA3, 0xB8)   # tertiary
-PALEBLUE  = RGBColor(0xBF, 0xDB, 0xFE)   # on-navy subtext
-CORAL     = RGBColor(0xEF, 0x44, 0x44)   # pain-point accent
+# ---- Brand palette (sampled from Amigo_PopulationHealthIntelligence.pdf) ----
+CREAM   = RGBColor(0xF1, 0xEC, 0xE4)   # page background
+CARD    = RGBColor(0xF7, 0xF3, 0xEC)   # card fill (a touch lighter/warmer)
+BORDER  = RGBColor(0xE1, 0xDA, 0xCF)   # hairline card border
+INK     = RGBColor(0x22, 0x1D, 0x17)   # headlines / near-black
+BODY    = RGBColor(0x47, 0x42, 0x3B)   # body copy
+MUTE    = RGBColor(0x8B, 0x84, 0x78)   # citations / footer
+TERRA   = RGBColor(0xB1, 0x4A, 0x2B)   # primary accent (terracotta)
+PEACH   = RGBColor(0xCF, 0x97, 0x83)   # accent on navy
+NAVY    = RGBColor(0x20, 0x30, 0x4A)   # deep navy
+NAVYTXT = RGBColor(0xEF, 0xEA, 0xE2)   # headline on navy
+NAVYBOD = RGBColor(0xC3, 0xBE, 0xB6)   # body on navy
 
-SERIF = "Georgia"
-SANS  = "Segoe UI"
+SERIF = "Playfair Display"   # Didone display serif
+SANS  = "Inter"              # humanist sans body
+MONO  = "Space Mono"         # monospace eyebrows / labels
 
 EMU = 914400
 SW, SH = 13.333, 7.5
@@ -38,449 +38,373 @@ prs.slide_height = Emu(int(SH * EMU))
 BLANK = prs.slide_layouts[6]
 
 
-# ---------------- helpers ----------------
-def _set_grad(shape, c1, c2, angle=45):
-    """Linear gradient fill on a shape via raw XML."""
-    sp = shape.fill._xPr
-    for tag in ("a:noFill", "a:solidFill", "a:gradFill", "a:blipFill", "a:pattFill", "a:grpFill"):
-        e = sp.find(qn(tag))
-        if e is not None:
-            sp.remove(e)
-    grad = sp.makeelement(qn("a:gradFill"), {})
-    lst = grad.makeelement(qn("a:gsLst"), {})
-    for pos, col in ((0, c1), (100000, c2)):
-        gs = grad.makeelement(qn("a:gs"), {"pos": str(pos)})
-        clr = grad.makeelement(qn("a:srgbClr"), {"val": "%02X%02X%02X" % (col[0], col[1], col[2])})
-        gs.append(clr)
-        lst.append(gs)
-    grad.append(lst)
-    lin = grad.makeelement(qn("a:lin"), {"ang": str(int(angle * 60000)), "scaled": "1"})
-    grad.append(lin)
-    ln = sp.find(qn("a:ln"))
-    sp.insert(list(sp).index(ln) if ln is not None else len(sp), grad)
+# ---------------- low-level helpers ----------------
+def _solid(shape, color):
+    shape.fill.solid(); shape.fill.fore_color.rgb = color
 
 
-def _shadow(shape, blur=0.06, dist=0.03, alpha=88):
+def _no_line(shape):
+    shape.line.fill.background()
+
+
+def _line(shape, color, w=0.75, alpha=None):
+    shape.line.color.rgb = color
+    shape.line.width = Pt(w)
+    if alpha is not None:
+        ln = shape.line._get_or_add_ln()
+        srgb = ln.find(qn("a:solidFill")).find(qn("a:srgbClr"))
+        srgb.append(srgb.makeelement(qn("a:alpha"), {"val": str(int(alpha * 1000))}))
+
+
+def _shadow(shape, blur=0.05, dist=0.028, alpha=93):
     spPr = shape._element.spPr
     ef = spPr.makeelement(qn("a:effectLst"), {})
-    sh = spPr.makeelement(qn("a:outerShdw"), {
-        "blurRad": str(int(blur * EMU)), "dist": str(int(dist * EMU)),
-        "dir": "5400000", "rotWithShape": "0"})
-    clr = spPr.makeelement(qn("a:srgbClr"), {"val": "1E3A8A"})
-    a = spPr.makeelement(qn("a:alpha"), {"val": str((100 - alpha) * 1000)})
-    clr.append(a); sh.append(clr); ef.append(sh); spPr.append(ef)
+    sh = spPr.makeelement(qn("a:outerShdw"),
+                          {"blurRad": str(int(blur * EMU)), "dist": str(int(dist * EMU)),
+                           "dir": "5400000", "rotWithShape": "0"})
+    clr = spPr.makeelement(qn("a:srgbClr"), {"val": "221D17"})
+    clr.append(spPr.makeelement(qn("a:alpha"), {"val": str((100 - alpha) * 1000)}))
+    sh.append(clr); ef.append(sh); spPr.append(ef)
 
 
-def slide():
+def slide(bg=CREAM):
     s = prs.slides.add_slide(BLANK)
-    bg = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, prs.slide_width, prs.slide_height)
-    bg.line.fill.background()
-    _set_grad(bg, BG1, BG2, 45)
-    bg.shadow.inherit = False
+    r = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, prs.slide_width, prs.slide_height)
+    r.shadow.inherit = False; _no_line(r); _solid(r, bg)
     return s
 
 
-def rect(s, x, y, w, h, shape=MSO_SHAPE.ROUNDED_RECTANGLE, radius=0.09):
+def rrect(s, x, y, w, h, radius_in=0.11, shape=MSO_SHAPE.ROUNDED_RECTANGLE):
     sp = s.shapes.add_shape(shape, Inches(x), Inches(y), Inches(w), Inches(h))
     sp.shadow.inherit = False
     if shape == MSO_SHAPE.ROUNDED_RECTANGLE:
         try:
-            sp.adjustments[0] = radius
+            sp.adjustments[0] = max(0.02, min(0.5, radius_in / min(w, h)))
         except Exception:
             pass
     return sp
 
 
-def card(s, x, y, w, h, radius=0.06, accent=False, shadow=True):
-    sp = rect(s, x, y, w, h, radius=radius)
-    _set_grad(sp, CARD_TOP, CARD_BOT, 90)
-    sp.line.color.rgb = NAVY
-    sp.line.width = Pt(0.75)
-    ln = sp.line._get_or_add_ln()
-    ln.find(qn("a:solidFill")).find(qn("a:srgbClr")).append(
-        ln.makeelement(qn("a:alpha"), {"val": "18000"}))
+def bar(s, x, y, w, h, color):
+    b = rrect(s, x, y, w, h, shape=MSO_SHAPE.RECTANGLE)
+    _no_line(b); _solid(b, color); return b
+
+
+def ring(s, cx, cy, r, color, alpha):
+    o = s.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - r), Inches(cy - r),
+                           Inches(2 * r), Inches(2 * r))
+    o.shadow.inherit = False
+    o.fill.background()
+    _line(o, color, w=1.0, alpha=alpha)
+    return o
+
+
+def card(s, x, y, w, h, radius=0.13, shadow=True):
+    c = rrect(s, x, y, w, h, radius_in=radius)
+    _solid(c, CARD); _line(c, BORDER, 1.0)
     if shadow:
-        _shadow(sp)
-    if accent:
-        bar = rect(s, x, y, w, 0.07, radius=0.5)
-        _set_grad(bar, NAVY, SKY, 0)
-        bar.line.fill.background()
-    return sp
+        _shadow(c)
+    return c
 
 
-def txt(s, x, y, w, h, runs, align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.TOP,
-        space_after=4, line_spacing=1.0):
-    """runs: list of paragraphs; each paragraph = list of (text, size, color, bold, font, italic)."""
+def R(t, sz, col=BODY, bold=False, fnt=SANS, ital=False):
+    return (t, sz, col, bold, fnt, ital)
+
+
+def txt(s, x, y, w, h, paras, align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.TOP,
+        space_after=4, line_spacing=1.0, spc=None):
     tb = s.shapes.add_textbox(Inches(x), Inches(y), Inches(w), Inches(h))
-    tf = tb.text_frame
-    tf.word_wrap = True
-    tf.vertical_anchor = anchor
+    tf = tb.text_frame; tf.word_wrap = True; tf.vertical_anchor = anchor
     tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0
-    for i, para in enumerate(runs):
+    for i, para in enumerate(paras):
         p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
-        p.alignment = align
-        p.space_after = Pt(space_after)
-        p.space_before = Pt(0)
-        p.line_spacing = line_spacing
+        p.alignment = align; p.space_after = Pt(space_after)
+        p.space_before = Pt(0); p.line_spacing = line_spacing
         for (t, sz, col, bold, fnt, ital) in para:
             r = p.add_run(); r.text = t
             f = r.font
             f.size = Pt(sz); f.bold = bold; f.italic = ital
             f.color.rgb = col; f.name = fnt
+            if spc is not None:
+                r._r.get_or_add_rPr().set("spc", str(int(spc * 100)))
     return tb
 
 
-def R(t, sz, col=INK, bold=False, fnt=SANS, ital=False):
-    return (t, sz, col, bold, fnt, ital)
+def footer(s, dark=False):
+    lc = NAVYBOD if dark else MUTE
+    txt(s, 0.7, SH - 0.52, 4, 0.3, [[R("AMIGO", 9, lc, False, MONO)]], spc=1.5)
+    txt(s, SW - 6.7, SH - 0.52, 6, 0.3,
+        [[R("POPULATION HEALTH INTELLIGENCE", 9, lc, False, MONO)]],
+        align=PP_ALIGN.RIGHT, spc=1.5)
 
 
-def topbar(s):
-    b = rect(s, 0, 0, SW, 0.07, shape=MSO_SHAPE.RECTANGLE)
-    _set_grad(b, NAVY, SKY, 0)
-    b.line.fill.background()
-    bb = rect(s, 0, SH - 0.07, SW, 0.07, shape=MSO_SHAPE.RECTANGLE)
-    _set_grad(bb, NAVY, SKY, 0)
-    bb.line.fill.background()
-
-
-def brandmark(s):
-    txt(s, 0.55, 0.22, 3.0, 0.5, [[R("Amigo", 20, NAVY, False, SERIF)]])
-    u = rect(s, 0.57, 0.68, 0.85, 0.03, shape=MSO_SHAPE.RECTANGLE)
-    _set_grad(u, NAVY, SKY, 0); u.line.fill.background()
-
-
-def footer(s, n):
-    txt(s, 0.55, SH - 0.5, 6, 0.3,
-        [[R("Amigo  ·  Population Health Intelligence", 8.5, FAINT)]])
-    txt(s, SW - 2.05, SH - 0.5, 1.5, 0.3,
-        [[R(f"{n} / 8", 8.5, FAINT)]], align=PP_ALIGN.RIGHT)
-
-
-def eyebrow(s, kicker, title, x=0.55, y=0.95, w=12.2):
-    txt(s, x, y, w, 0.35, [[R(kicker.upper(), 11.5, SKY, True)]])
-    txt(s, x, y + 0.32, w, 0.75, [[R(title, 27, NAVY, True)]])
-    u = rect(s, x + 0.02, y + 0.95, 0.85, 0.035, shape=MSO_SHAPE.RECTANGLE)
-    _set_grad(u, NAVY, SKY, 0); u.line.fill.background()
-
-
-def pill(s, x, y, w, text, on_navy=False):
-    p = rect(s, x, y, w, 0.42, radius=0.5)
-    if on_navy:
-        _set_grad(p, NAVY, SKY, 0); p.line.fill.background()
-        col = WHITE
-    else:
-        p.fill.solid(); p.fill.fore_color.rgb = WHITE
-        p.line.color.rgb = NAVY; p.line.width = Pt(1)
-        _shadow(p, blur=0.04, dist=0.02, alpha=90)
-        col = NAVY
-    txt(s, x, y + 0.02, w, 0.4, [[R(text, 11, col, True)]],
-        align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+def head(s, kicker, title_paras, dark=False, y=0.7, tsize=34):
+    kcol = PEACH if dark else TERRA
+    tcol = NAVYTXT if dark else INK
+    txt(s, 0.72, y, 11.5, 0.35, [[R(kicker.upper(), 11.5, kcol, False, MONO)]], spc=2)
+    tp = [[R(seg[0], tsize, tcol, True, SERIF)] if isinstance(seg, tuple) else
+          [R(seg, tsize, tcol, True, SERIF)] for seg in title_paras]
+    txt(s, 0.7, y + 0.34, 11.9, 0.55 * len(title_paras) + 0.5, tp,
+        line_spacing=0.98, space_after=0)
+    bar(s, 0.74, y + 0.4 + 0.62 * len(title_paras), 1.45, 0.045, TERRA)
 
 
 # ============================================================
-# SLIDE 1 — TITLE
+# SLIDE 1 — TITLE  (cream, concentric rings — mirrors Amigo p1)
 # ============================================================
-s = slide(); topbar(s)
-txt(s, 0.7, 0.55, 4, 0.6, [[R("Amigo", 30, NAVY, False, SERIF)]])
-u = rect(s, 0.72, 1.18, 1.1, 0.035, shape=MSO_SHAPE.RECTANGLE)
-_set_grad(u, NAVY, SKY, 0); u.line.fill.background()
-
-# center hero
-txt(s, 1, 2.35, 11.33, 0.5,
-    [[R("PARTNERSHIP  OPPORTUNITY", 14, SKY, True)]], align=PP_ALIGN.CENTER)
-txt(s, 0.8, 2.8, 11.73, 1.7,
-    [[R("Amigo × Cleveland Diagnostics", 42, NAVY, True)],
-     [R("Scaling early cancer detection from a validated test", 21, INK, False)],
-     [R("to a population-scale screening engine", 21, INK, False)]],
-    align=PP_ALIGN.CENTER, line_spacing=1.05, space_after=2)
-
-band = rect(s, 3.17, 4.95, 7.0, 0.045, shape=MSO_SHAPE.RECTANGLE)
-_set_grad(band, NAVY, SKY, 0); band.line.fill.background()
-
-txt(s, 1, 5.2, 11.33, 0.5,
-    [[R("AI agents that identify eligible patients, drive adoption, and generate real-world evidence — for IsoPSA and beyond",
-        13, MUTE, False, SANS, True)]], align=PP_ALIGN.CENTER)
-
-# footer credit
-txt(s, 0.7, SH - 0.55, 8, 0.3, [[R("Prepared for Cleveland Diagnostics, Inc.  ·  2026", 10.5, FAINT)]])
-txt(s, SW - 4.7, SH - 0.55, 4, 0.3, [[R("elzoghby.elaf@amigo.ai", 10.5, SKY, True)]], align=PP_ALIGN.RIGHT)
+s = slide()
+for rr, al in [(3.9, 26), (3.0, 34), (2.15, 42), (1.35, 50)]:
+    ring(s, 12.4, 2.75, rr, TERRA, al)
+txt(s, 0.75, 0.9, 10, 0.4,
+    [[R("PARTNERSHIP OPPORTUNITY  ·  AMIGO × CLEVELAND DIAGNOSTICS", 12, MUTE, False, MONO)]], spc=2)
+txt(s, 0.7, 1.75, 10.4, 3.0,
+    [[R("Scale IsoPSA", 62, INK, True, SERIF)],
+     [R("to standard of care.", 62, INK, True, SERIF)]],
+    line_spacing=0.96, space_after=0)
+txt(s, 0.73, 4.35, 10, 0.9, [[R("Predict. Prevent. Act.", 34, TERRA, True, SERIF, True)]])
+txt(s, 0.75, 5.75, 9, 0.4, [[R("PREPARED FOR", 11, MUTE, False, MONO)]], spc=2)
+txt(s, 0.72, 6.05, 9, 0.5, [[R("Cleveland Diagnostics, Inc.", 22, NAVY, False, SERIF)]])
+txt(s, 0.7, SH - 0.52, 6, 0.3, [[R("AMIGO · CONFIDENTIAL", 9, MUTE, False, MONO)]], spc=1.5)
 
 
 # ============================================================
-# SLIDE 2 — CLEVELAND DIAGNOSTICS SUMMARY (them)
+# SLIDE 2 — CLEVELAND DIAGNOSTICS SUMMARY
 # ============================================================
-s = slide(); topbar(s); brandmark(s); footer(s, 2)
-eyebrow(s, "The Company", "Cleveland Diagnostics at a Glance")
+s = slide(); footer(s)
+head(s, "The Company", ["Cleveland Diagnostics at a glance."])
 
-# stat tiles row
-stats = [("2025", "FDA PMA approval of IsoPSA (Dec 1)"),
-         ("$75M+", "Growth capital raised (2024, Novo Holdings)"),
-         ("~90%", "Sensitivity for high-grade cancer"),
-         ("0.78", "Validation AUC (n≈1,093, 8 sites)")]
-tw, gap, x0, ty = 2.85, 0.2, 0.55, 1.95
-for i, (big, lab) in enumerate(stats):
+stats = [("2025", "FDA PMA approval of IsoPSA (Dec 1)", TERRA, "FDA · 2025"),
+         ("$75M+", "Growth capital raised, led by Novo Holdings", NAVY, "Business Wire · 2024"),
+         ("~90%", "Sensitivity for high-grade cancer", TERRA, "Klein et al. · 2022"),
+         ("0.78", "Validation AUC, n≈1,093 across 8 sites", NAVY, "Urologic Oncology · 2022")]
+tw, gap, x0, ty = 2.92, 0.18, 0.72, 2.15
+for i, (big, lab, col, cite) in enumerate(stats):
     x = x0 + i * (tw + gap)
-    card(s, x, ty, tw, 1.15)
-    txt(s, x, ty + 0.17, tw, 0.55, [[R(big, 30, NAVY, True)]], align=PP_ALIGN.CENTER)
-    txt(s, x + 0.1, ty + 0.72, tw - 0.2, 0.4, [[R(lab, 10, MUTE)]], align=PP_ALIGN.CENTER)
+    card(s, x, ty, tw, 1.55)
+    txt(s, x + 0.22, ty + 0.16, tw - 0.4, 0.6, [[R(big, 34, col, True, SERIF)]])
+    txt(s, x + 0.24, ty + 0.72, tw - 0.44, 0.55, [[R(lab, 10, BODY)]], line_spacing=1.0)
+    txt(s, x + 0.24, ty + 1.24, tw - 0.44, 0.25, [[R(cite, 8, MUTE, False, MONO)]])
 
-# left: profile
-card(s, 0.55, 3.3, 6.1, 3.5, accent=True)
-txt(s, 0.85, 3.55, 5.6, 0.4, [[R("WHO THEY ARE", 12, NAVY, True)]])
-prof = [
-    ("Precision-oncology biotech", "Cleveland, OH — rooted in predecessor AnalizaDx."),
-    ("Core platform: SIA / IsoClear", "Reads protein structure, not concentration, to find cancer isoforms."),
-    ("Lead product: IsoPSA", "Stratifies high-grade prostate-cancer risk; aids the biopsy decision."),
-    ("Regulatory milestone", "FDA Premarket Approval as an IVD kit (Dec 2025)."),
-    ("Leadership", "Michael Iskra named CEO (Jan 2026) to drive scale-up."),
-]
-yy = 3.92
+# two profile cards
+card(s, 0.72, 3.95, 6.03, 2.75)
+txt(s, 0.98, 4.18, 5.5, 0.3, [[R("WHO THEY ARE", 10.5, TERRA, False, MONO)]], spc=1.5)
+prof = [("Precision-oncology biotech", "Cleveland, OH — rooted in predecessor AnalizaDx."),
+        ("Platform: SIA / IsoClear", "Reads protein structure, not concentration, to find cancer isoforms."),
+        ("Lead product: IsoPSA", "Stratifies high-grade prostate-cancer risk; aids the biopsy decision."),
+        ("New CEO", "Michael Iskra (Jan 2026), to drive commercial scale-up.")]
+yy = 4.55
 for h, d in prof:
-    txt(s, 0.9, yy, 5.5, 0.3, [[R("●  ", 10, SKY, True), R(h, 11.5, NAVY, True)]])
-    txt(s, 1.15, yy + 0.25, 5.3, 0.3, [[R(d, 10, INK)]], line_spacing=1.0)
-    yy += 0.57
+    txt(s, 0.98, yy, 5.6, 0.3, [[R(h, 12.5, INK, True, SERIF), R("  —  " + d, 9.5, BODY)]],
+        line_spacing=1.0)
+    yy += 0.52
 
-# right: evidence + focus
-card(s, 6.85, 3.3, 5.93, 3.5, accent=True)
-txt(s, 7.15, 3.55, 5.3, 0.4, [[R("EVIDENCE & POSITIONING", 12, NAVY, True)]])
-ev = [
-    "Prospective, multicenter validation (Klein et al., 2022)",
-    "Outperformed total PSA and % free PSA on AUC & specificity",
-    "SUO 2025: accuracy shown with and without mpMRI",
-    "Competes with mpMRI pathways, 4Kscore, PHI",
-]
-yy = 3.98
+card(s, 6.97, 3.95, 5.63, 2.75)
+txt(s, 7.23, 4.18, 5.1, 0.3, [[R("EVIDENCE & POSITIONING", 10.5, TERRA, False, MONO)]], spc=1.5)
+ev = ["Prospective, multicenter validation (Klein et al., 2022)",
+      "Beat total PSA and % free PSA on AUC and specificity",
+      "SUO 2025: accuracy shown with and without mpMRI",
+      "Competes with mpMRI pathways, 4Kscore, PHI"]
+yy = 4.55
 for e in ev:
-    txt(s, 7.2, yy, 5.4, 0.4, [[R("✓  ", 11, SKY, True), R(e, 10.5, INK)]])
-    yy += 0.44
-txt(s, 7.15, 5.9, 5.3, 0.3, [[R("SINGLE-PRODUCT TODAY — PIPELINE AHEAD", 10.5, NAVY, True)]])
-txt(s, 7.15, 6.2, 5.5, 0.5,
-    [[R("IsoPSA is the sole commercial product; the SIA platform can extend to other cancers.", 10, MUTE, False, SANS, True)]])
+    txt(s, 7.23, yy, 5.2, 0.35, [[R("→  ", 11, TERRA, True), R(e, 10.5, BODY)]])
+    yy += 0.42
+txt(s, 7.23, 6.28, 5.2, 0.3,
+    [[R("Single product today — SIA platform can extend to other cancers.",
+        9.5, MUTE, False, SANS, True)]])
 
 
 # ============================================================
-# SLIDE 3 — THEIR PAIN POINTS
+# SLIDE 3 — PAIN POINTS
 # ============================================================
-s = slide(); topbar(s); brandmark(s); footer(s, 3)
-eyebrow(s, "The Challenge", "Strategic Pain Points After FDA Approval")
-txt(s, 0.55, 1.95, 12.2, 0.4,
-    [[R("Approval is won. The harder problem is now commercial — turning a validated test into standard-of-care at national scale.",
-        13, MUTE, False, SANS, True)]])
+s = slide(); footer(s)
+head(s, "The Challenge", ["The approval is won.", "The scale-up isn't."])
+txt(s, 0.72, 2.45, 11.6, 0.4,
+    [[R("Turning a validated test into standard-of-care at national scale is now the binding constraint.",
+        13, BODY, False, SANS, True)]])
 
 pains = [
-    ("Commercial scale-up", "Moving from a niche lab-developed test to nationwide IVD adoption — with a salesforce that can't reach every urologist and PCP."),
-    ("Patient identification", "The right patients (men 50+, rising PSA) surface in primary care, where risk-stratification is inconsistent and IsoPSA is rarely top-of-mind."),
-    ("Physician & payer adoption", "Ordering behavior is hard to shift; reimbursement and payer coverage remain unclear and slow the funnel."),
-    ("Real-world evidence gap", "Payers and guideline bodies want real-world outcomes; key data (e.g. SUO 2025) is conference-stage, not yet peer-reviewed."),
-    ("Competitive pressure", "mpMRI pathways, 4Kscore and PHI compete for the same biopsy-decision moment — differentiation must be continually proven."),
-    ("Single-product concentration", "Revenue rests entirely on IsoPSA; pipeline expansion needs large longitudinal datasets and validation partners."),
+    ("Commercial scale-up", "From a niche lab-developed test to nationwide IVD adoption — a salesforce can't reach every urologist and PCP."),
+    ("Patient identification", "Eligible men (50+, rising PSA) surface in primary care, where risk-stratification is inconsistent and IsoPSA is rarely top-of-mind."),
+    ("Adoption & reimbursement", "Ordering behavior is hard to shift; payer coverage remains unclear and slows the funnel."),
+    ("Real-world evidence gap", "Payers and guideline bodies want real-world outcomes; key data (SUO 2025) is conference-stage, not yet peer-reviewed."),
+    ("Competitive pressure", "mpMRI pathways, 4Kscore and PHI compete for the same biopsy-decision moment — differentiation must be re-proven."),
+    ("Single-product risk", "Revenue rests entirely on IsoPSA; pipeline expansion needs large longitudinal datasets and validation partners."),
 ]
-cw, ch, gx, gy = 4.0, 1.75, 0.28, 0.28
-x0, y0 = 0.55, 2.55
+cw, ch, gx, gy = 3.9, 1.72, 0.2, 0.22
+x0, y0 = 0.72, 2.95
 for i, (h, d) in enumerate(pains):
     r, c = divmod(i, 3)
     x = x0 + c * (cw + gx); y = y0 + r * (ch + gy)
-    cd = card(s, x, y, cw, ch)
-    tab = rect(s, x, y, 0.09, ch, shape=MSO_SHAPE.RECTANGLE)
-    tab.fill.solid(); tab.fill.fore_color.rgb = CORAL; tab.line.fill.background()
-    txt(s, x + 0.28, y + 0.18, cw - 0.45, 0.4, [[R(f"{i+1}.  ", 13, CORAL, True), R(h, 13.5, NAVY, True)]])
-    txt(s, x + 0.28, y + 0.62, cw - 0.5, 1.05, [[R(d, 10.3, INK)]], line_spacing=1.02)
+    card(s, x, y, cw, ch)
+    txt(s, x + 0.25, y + 0.2, 1.0, 0.3, [[R("%02d" % (i + 1), 12, TERRA, False, MONO)]], spc=1)
+    txt(s, x + 0.25, y + 0.46, cw - 0.5, 0.4, [[R(h, 14.5, INK, True, SERIF)]])
+    txt(s, x + 0.25, y + 0.9, cw - 0.5, 0.75, [[R(d, 9.7, BODY)]], line_spacing=1.03)
 
 
 # ============================================================
-# SLIDE 4 — PAIN POINTS -> AMIGO USE CASES (solve them)
+# SLIDE 4 — PAIN -> AMIGO AGENT MAPPING
 # ============================================================
-s = slide(); topbar(s); brandmark(s); footer(s, 4)
-eyebrow(s, "The Fit", "Solving the Pain Points with Amigo Agents")
-txt(s, 0.55, 1.95, 12.2, 0.4,
-    [[R("Each Amigo AI agent maps directly onto a Cleveland Diagnostics gap — not a dashboard, an agent that acts.",
-        13, MUTE, False, SANS, True)]])
+s = slide(); footer(s)
+head(s, "The Fit", ["Every gap maps to an agent."])
 
-# header row
-hy = 2.5
-for x, w, t in [(0.55, 4.3, "PAIN POINT"), (4.95, 3.35, "AMIGO AGENT"), (8.4, 4.38, "HOW IT SOLVES IT")]:
-    hd = rect(s, x, hy, w, 0.45, radius=0.12)
-    _set_grad(hd, NAVY, SKY, 0); hd.line.fill.background()
-    txt(s, x + 0.15, hy + 0.02, w - 0.2, 0.4, [[R(t, 11, WHITE, True)]], anchor=MSO_ANCHOR.MIDDLE)
+cols = [(0.72, 3.5, "PAIN POINT"), (4.42, 2.75, "AMIGO AGENT"), (7.4, 5.2, "HOW IT SOLVES IT")]
+hy = 2.35
+for x, w, t in cols:
+    txt(s, x, hy, w, 0.3, [[R(t, 10.5, TERRA, False, MONO)]], spc=1.5)
+bar(s, 0.72, hy + 0.36, 11.9, 0.02, BORDER)
 
 rows = [
-    ("Finding eligible patients", "Risk Stratification", "Predictive scoring flags men 50+ with rising PSA across the population — a ready demand funnel for IsoPSA."),
-    ("Patients slip through primary care", "Observation", "24/7 surveillance detects newly elevated PSA labs in real time and triggers an IsoPSA recommendation at the point of care."),
-    ("Adoption & ordering behavior", "Campaign Tracking", "Closed-loop screening campaigns with live dashboards drive physician ordering and patient follow-through."),
-    ("Real-world evidence gap", "Patient Profile (HIE)", "360° longitudinal records generate real-world outcomes data for payers, guidelines and label expansion."),
-    ("Payer value & pipeline", "Simulation", "Digital-twin engine models biopsy-avoidance ROI for payer dossiers and forecasts new SIA biomarker programs."),
+    ("Finding eligible patients", "Risk Stratification",
+     "Predictive scoring flags men 50+ with rising PSA across the population — a ready, self-refilling demand funnel for IsoPSA."),
+    ("Patients slip through primary care", "Observation",
+     "24/7 surveillance detects newly elevated PSA labs in real time and prompts an IsoPSA recommendation at the point of care."),
+    ("Adoption & ordering behavior", "Campaign Tracking",
+     "Closed-loop screening campaigns with live dashboards drive physician ordering and patient follow-through."),
+    ("Real-world evidence gap", "Patient Profile (HIE)",
+     "360° longitudinal records generate real-world outcomes data for payers, guidelines and label expansion."),
+    ("Payer value & pipeline", "Simulation",
+     "Digital-twin engine models biopsy-avoidance ROI for payer dossiers and forecasts new SIA biomarker programs."),
 ]
-ry = hy + 0.55
-rh = 0.78
+ry = hy + 0.5
+rh = 0.82
 for i, (pn, ag, hw) in enumerate(rows):
-    y = ry + i * (rh + 0.06)
-    c1 = card(s, 0.55, y, 4.3, rh, shadow=True)
-    txt(s, 0.75, y + 0.05, 4.0, rh - 0.1, [[R(pn, 11.5, NAVY, True)]], anchor=MSO_ANCHOR.MIDDLE)
-    c2 = rect(s, 4.95, y, 3.35, rh, radius=0.1)
-    _set_grad(c2, CARD_TOP, CARD_BOT, 90)
-    c2.line.color.rgb = SKY; c2.line.width = Pt(1.25); _shadow(c2)
-    txt(s, 5.1, y + 0.05, 3.1, rh - 0.1, [[R("⚡  ", 12, SKY, True), R(ag, 12, NAVY, True)]], anchor=MSO_ANCHOR.MIDDLE)
-    c3 = card(s, 8.4, y, 4.38, rh, shadow=True)
-    txt(s, 8.6, y + 0.06, 4.05, rh - 0.12, [[R(hw, 9.8, INK)]], anchor=MSO_ANCHOR.MIDDLE, line_spacing=1.0)
+    y = ry + i * rh
+    txt(s, 0.72, y + 0.06, 3.5, rh - 0.1, [[R(pn, 13, INK, True, SERIF)]], anchor=MSO_ANCHOR.MIDDLE)
+    txt(s, 4.42, y + 0.06, 2.85, rh - 0.1,
+        [[R("▸ ", 12, TERRA, True), R(ag, 12.5, NAVY, False, SERIF)]], anchor=MSO_ANCHOR.MIDDLE)
+    txt(s, 7.4, y + 0.06, 5.2, rh - 0.1, [[R(hw, 10.3, BODY)]],
+        anchor=MSO_ANCHOR.MIDDLE, line_spacing=1.03)
+    if i < len(rows) - 1:
+        bar(s, 0.72, y + rh - 0.02, 11.9, 0.012, BORDER)
 
 
 # ============================================================
-# SLIDE 5 — HIGH-VALUE USE CASES (beneficial)
+# SLIDE 5 — HIGH-VALUE USE CASES
 # ============================================================
-s = slide(); topbar(s); brandmark(s); footer(s, 5)
-eyebrow(s, "The Opportunity", "High-Value Use Cases for Cleveland Diagnostics")
+s = slide(); footer(s)
+head(s, "The Opportunity", ["Where the value compounds."])
 
 ucs = [
-    ("◎", "Population-scale demand generation",
-     "Screen millions of longitudinal records to surface every IsoPSA-eligible man and route them to ordering providers — a continuous, self-refilling top of funnel."),
-    ("⟳", "Reflex screening pathway",
-     "Elevated PSA in primary care automatically triggers an IsoPSA reflex recommendation, closing the gap between lab result and risk-stratified biopsy decision."),
-    ("♡", "Real-world evidence engine",
-     "HIE-powered outcomes tracking builds the peer-review-grade real-world dataset payers and guideline committees require for coverage and inclusion."),
-    ("⚡", "Payer value modeling",
-     "Simulate biopsy-avoidance and cost savings per population to arm reimbursement negotiations with quantified, defensible ROI."),
-    ("▶", "Guideline & literature intelligence",
-     "The NLP engine (2,000+ papers/month) keeps medical affairs ahead of evidence, competitors and guideline shifts in prostate diagnostics."),
-    ("✦", "Pipeline acceleration beyond IsoPSA",
-     "Reuse Amigo's cancer focus areas + longitudinal cohorts to validate future SIA biomarkers — de-risking the single-product concentration."),
+    ("Population-scale demand generation",
+     "Screen millions of longitudinal records to surface every IsoPSA-eligible man and route them to ordering providers."),
+    ("Reflex screening pathway",
+     "Elevated PSA in primary care auto-triggers an IsoPSA reflex recommendation — closing the gap from lab result to biopsy decision."),
+    ("Real-world evidence engine",
+     "HIE-powered outcomes tracking builds the peer-review-grade RWE dataset payers and guideline committees require."),
+    ("Payer value modeling",
+     "Simulate biopsy-avoidance and cost savings per population to arm reimbursement negotiations with defensible ROI."),
+    ("Guideline & literature intelligence",
+     "The NLP engine keeps medical affairs ahead of evidence, competitors and guideline shifts in prostate diagnostics."),
+    ("Pipeline acceleration beyond IsoPSA",
+     "Reuse Amigo's cancer cohorts and longitudinal data to validate future SIA biomarkers — de-risking single-product reliance."),
 ]
-cw, ch, gx, gy = 4.0, 1.85, 0.28, 0.25
-x0, y0 = 0.55, 2.2
-for i, (ic, h, d) in enumerate(ucs):
+cw, ch, gx, gy = 3.9, 1.72, 0.2, 0.22
+x0, y0 = 0.72, 2.2
+for i, (h, d) in enumerate(ucs):
     r, c = divmod(i, 3)
     x = x0 + c * (cw + gx); y = y0 + r * (ch + gy)
-    card(s, x, y, cw, ch, accent=True)
-    bdg = rect(s, x + 0.25, y + 0.28, 0.55, 0.55, radius=0.5)
-    _set_grad(bdg, NAVY, SKY, 45); bdg.line.fill.background()
-    txt(s, x + 0.25, y + 0.3, 0.55, 0.5, [[R(ic, 16, WHITE, True)]], align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
-    txt(s, x + 0.95, y + 0.28, cw - 1.15, 0.55, [[R(h, 12.5, NAVY, True)]], line_spacing=0.95, anchor=MSO_ANCHOR.MIDDLE)
-    txt(s, x + 0.28, y + 0.92, cw - 0.5, 0.85, [[R(d, 10, INK)]], line_spacing=1.0)
+    card(s, x, y, cw, ch)
+    txt(s, x + 0.25, y + 0.2, 1.0, 0.3, [[R("%02d" % (i + 1), 12, TERRA, False, MONO)]], spc=1)
+    txt(s, x + 0.25, y + 0.46, cw - 0.5, 0.55, [[R(h, 13.5, INK, True, SERIF)]], line_spacing=0.96)
+    txt(s, x + 0.25, y + 1.02, cw - 0.5, 0.65, [[R(d, 9.7, BODY)]], line_spacing=1.03)
 
 
 # ============================================================
-# SLIDE 6 — PARTNERSHIP VALUE / IMPACT & ROADMAP
+# SLIDE 6 — VALUE & ROADMAP  (mirrors Amigo "THE PATH" p19)
 # ============================================================
-s = slide(); topbar(s); brandmark(s); footer(s, 6)
-eyebrow(s, "The Impact", "What the Partnership Delivers")
+s = slide(); footer(s)
+head(s, "The Path", ["From first agent to national screening reach."])
 
-# expected impact tiles
-imp = [("↑ Funnel", "More eligible patients identified and routed to IsoPSA"),
-       ("↑ Adoption", "Closed-loop campaigns lift provider ordering"),
-       ("↑ Evidence", "Real-world data for payers & guidelines"),
-       ("↓ Risk", "Pipeline diversification beyond a single test")]
-tw, gap, x0, ty = 2.95, 0.18, 0.55, 2.05
-for i, (big, lab) in enumerate(imp):
-    x = x0 + i * (tw + gap)
-    card(s, x, ty, tw, 1.15, accent=True)
-    txt(s, x, ty + 0.22, tw, 0.5, [[R(big, 19, NAVY, True)]], align=PP_ALIGN.CENTER)
-    txt(s, x + 0.12, ty + 0.68, tw - 0.24, 0.42, [[R(lab, 9.7, MUTE)]], align=PP_ALIGN.CENTER, line_spacing=0.95)
-
-# roadmap
-txt(s, 0.55, 3.55, 12, 0.35, [[R("A PHASED ROADMAP", 12, NAVY, True)]])
 phases = [
-    ("Weeks 0–6", "Deploy & integrate", "Connect to HIE / lab feeds and stand up the eligible-patient model — Amigo deploys in as little as 6 weeks."),
-    ("Quarter 1", "Reflex pathway live", "Elevated-PSA surveillance triggers IsoPSA recommendations; first adoption campaign runs with live dashboards."),
-    ("Quarters 2–3", "Evidence & payers", "Longitudinal outcomes accrue into an RWE dataset; simulation powers payer value dossiers."),
-    ("Quarter 4+", "Expand the platform", "Extend agents to new SIA biomarkers and cancer programs across the national footprint."),
+    ("PHASE 01", "Workshop", "Co-define eligible-patient criteria and map HIE / lab data foundations with the clinical team.", "WEEKS 1–2"),
+    ("PHASE 02", "First agent live", "Risk-stratification model runs on real data — 70–80% pre-built, the rest calibrated to the population.", "~6 WEEKS"),
+    ("PHASE 03", "Reflex & campaigns", "Elevated-PSA surveillance triggers IsoPSA prompts; adoption campaigns run with live dashboards.", "QUARTERS"),
+    ("PHASE 04", "Evidence & expand", "RWE accrues for payers; simulation powers value dossiers; extend to new SIA biomarkers.", "ONGOING"),
 ]
-pw, gx, x0, py = 3.02, 0.18, 0.55, 3.95
-for i, (ph, h, d) in enumerate(phases):
+pw, gx, x0, py = 2.92, 0.18, 0.72, 2.75
+for i, (ph, h, d, tf) in enumerate(phases):
     x = x0 + i * (pw + gx)
     card(s, x, py, pw, 2.55)
-    bar = rect(s, x, py, pw, 0.07, radius=0.5)
-    _set_grad(bar, NAVY, SKY, 0); bar.line.fill.background()
-    txt(s, x + 0.22, py + 0.24, pw - 0.4, 0.35, [[R(ph, 11, SKY, True)]])
-    txt(s, x + 0.22, py + 0.58, pw - 0.4, 0.55, [[R(h, 13.5, NAVY, True)]], line_spacing=0.95)
-    txt(s, x + 0.22, py + 1.18, pw - 0.42, 1.2, [[R(d, 10, INK)]], line_spacing=1.05)
+    txt(s, x + 0.24, py + 0.22, pw - 0.4, 0.3, [[R(ph, 10.5, TERRA, False, MONO)]], spc=1)
+    txt(s, x + 0.24, py + 0.56, pw - 0.4, 0.6, [[R(h, 16, NAVY, True, SERIF)]], line_spacing=0.95)
+    txt(s, x + 0.24, py + 1.18, pw - 0.46, 1.05, [[R(d, 9.8, BODY)]], line_spacing=1.05)
+    txt(s, x + 0.24, py + 2.18, pw - 0.4, 0.3, [[R(tf, 9, MUTE, False, MONO)]], spc=1)
     if i < 3:
-        txt(s, x + pw - 0.02, py + 0.9, 0.3, 0.4, [[R("→", 18, SKY, True)]], align=PP_ALIGN.CENTER)
+        txt(s, x + pw - 0.02, py + 0.95, 0.32, 0.4, [[R("→", 17, TERRA, True)]], align=PP_ALIGN.CENTER)
+
+bar(s, 0.72, 5.55, 11.9, 0.02, BORDER)
+txt(s, 0.72, 5.72, 11.9, 0.6,
+    [[R("Deployment in ~6 weeks", 13, INK, True, SERIF),
+      R("  ·  no model reaches production without clinical sign-off. We ship the loop — find the patient, prompt the order, prove the outcome.",
+        12, BODY)]], line_spacing=1.1)
 
 
 # ============================================================
-# SLIDE 7 — AMIGO SUMMARY (us)
+# SLIDE 7 — AMIGO SUMMARY  (Predict -> Prevent -> Act loop, p9 style)
 # ============================================================
-s = slide(); topbar(s); brandmark(s); footer(s, 7)
-eyebrow(s, "The Partner", "Amigo — Population Health Intelligence")
+s = slide(); footer(s)
+head(s, "The Partner", ["Amigo — population health intelligence."])
 
-# stat row
-stats = [("22.2x", "Return on investment"), ("6M+", "Patient interactions"),
-         ("6 wks", "To full deployment"), ("100%", "Hospital coverage")]
-tw, gap, x0, ty = 2.95, 0.18, 0.55, 1.95
-for i, (big, lab) in enumerate(stats):
-    x = x0 + i * (tw + gap)
-    card(s, x, ty, tw, 1.05)
-    txt(s, x, ty + 0.16, tw, 0.5, [[R(big, 27, NAVY, True)]], align=PP_ALIGN.CENTER)
-    txt(s, x + 0.1, ty + 0.66, tw - 0.2, 0.35, [[R(lab, 10, MUTE)]], align=PP_ALIGN.CENTER)
-
-# left: agent architecture
-card(s, 0.55, 3.2, 6.1, 3.45, accent=True)
-txt(s, 0.85, 3.45, 5.6, 0.4, [[R("AI AGENT ARCHITECTURE", 12, NAVY, True)]])
-agents = [
-    ("Observation", "Live population surveillance, 24/7"),
-    ("Risk Stratification", "Identify high-risk patients before crisis"),
-    ("Simulation", "Forecast intervention outcomes (digital twin)"),
-    ("Campaign Tracking", "Closed-loop action with live dashboards"),
-    ("Patient Profile", "360° longitudinal view, HIE-powered"),
+loop = [
+    ("01 · PREDICT", "Predict", "Live surveillance and risk stratification across a whole population — down to district, cohort and individual."),
+    ("02 · PREVENT", "Prevent", "Simulate interventions before you spend — quantify the cost of inaction and rank options by return."),
+    ("03 · ACT", "Act", "Launch the campaign, then track forecast-versus-observed in real time — closed-loop, not a data lake."),
 ]
-yy = 3.9
-for h, d in agents:
-    txt(s, 0.9, yy, 5.6, 0.3, [[R("⚡  ", 11, SKY, True), R(h + " — ", 11.5, NAVY, True), R(d, 10.5, INK)]])
-    yy += 0.53
+cw, gx, x0, py = 3.86, 0.16, 0.72, 2.35
+for i, (lab, h, d) in enumerate(loop):
+    x = x0 + i * (cw + gx)
+    card(s, x, py, cw, 2.2)
+    txt(s, x + 0.26, py + 0.22, cw - 0.4, 0.3, [[R(lab, 10.5, TERRA, False, MONO)]], spc=1.5)
+    txt(s, x + 0.26, py + 0.55, cw - 0.4, 0.55, [[R(h, 22, NAVY, True, SERIF)]])
+    txt(s, x + 0.26, py + 1.15, cw - 0.5, 0.95, [[R(d, 10.3, BODY)]], line_spacing=1.05)
+    if i < 2:
+        txt(s, x + cw - 0.02, py + 0.85, 0.3, 0.4, [[R("→", 17, TERRA, True)]], align=PP_ALIGN.CENTER)
 
-# right: why amigo + compliance
-card(s, 6.85, 3.2, 5.93, 3.45, accent=True)
-txt(s, 7.15, 3.45, 5.3, 0.4, [[R("WHY AMIGO", 12, NAVY, True)]])
-why = [
-    "Not dashboards — AI agents that act",
-    "Built on billions of longitudinal health records",
-    "NLP engine processing 2,000+ papers / month",
-    "Clinical + administrative intelligence, unified",
-    "8 clinical focus areas — incl. 4 cancers",
-]
-yy = 3.9
-for w in why:
-    txt(s, 7.2, yy, 5.5, 0.3, [[R("✦  ", 11, SKY, True), R(w, 11, INK)]])
-    yy += 0.42
-txt(s, 7.15, 6.02, 5.5, 0.3,
-    [[R("SOC 2 Type II · HIPAA · GDPR · Local Data Residency", 10, NAVY, True)]])
-txt(s, 7.15, 6.3, 5.5, 0.3, [[R("Backed by General Catalyst · Madrona", 9.5, FAINT, False, SANS, True)]])
+txt(s, 0.72, 4.72, 11.9, 0.3,
+    [[R("OUTCOMES FEED BACK INTO PREDICTION", 9.5, MUTE, False, MONO)]], spc=2, align=PP_ALIGN.CENTER)
+bar(s, 0.72, 5.02, 11.9, 0.012, BORDER)
+
+strip = [("WHO WE ARE", "A healthcare-AI infrastructure company — safe, reliable AI across the care spectrum. Not a chatbot vendor."),
+         ("PROVEN AT SCALE", "22.2x ROI · 6M+ patient interactions · deploys in ~6 weeks · SOC 2 · HIPAA · GDPR."),
+         ("BACKED BY", "General Catalyst · Madrona · United Healthcare / Optum Ventures.")]
+cw2, gx2, x0 = 3.86, 0.16, 0.72
+for i, (lab, d) in enumerate(strip):
+    x = x0 + i * (cw2 + gx2)
+    txt(s, x, 5.28, cw2, 0.3, [[R(lab, 10, TERRA, False, MONO)]], spc=1.5)
+    txt(s, x, 5.58, cw2 - 0.15, 1.0, [[R(d, 10, BODY)]], line_spacing=1.08)
 
 
 # ============================================================
-# SLIDE 8 — WHY AMIGO + NEXT STEPS (CTA)
+# SLIDE 8 — THE INVITATION  (navy, mirrors Amigo p20)
 # ============================================================
-s = slide(); topbar(s)
-brandmark(s)
-eyebrow(s, "The Ask", "Why Amigo for Cleveland Diagnostics")
+s = slide(bg=NAVY); footer(s, dark=True)
+txt(s, 0.75, 0.9, 10, 0.35, [[R("THE INVITATION", 11.5, PEACH, False, MONO)]], spc=2)
+txt(s, 0.7, 1.35, 11.5, 1.8,
+    [[R("From a validated test", 40, NAVYTXT, True, SERIF)],
+     [R("to a screening engine you own.", 40, NAVYTXT, True, SERIF)]],
+    line_spacing=0.98, space_after=0)
+bar(s, 0.74, 3.15, 1.45, 0.045, PEACH)
+txt(s, 0.72, 3.5, 11.6, 0.9,
+    [[R("The evidence is settled and IsoPSA is approved. The missing piece is execution — finding the patient, prompting the order, and proving the outcome, as one closed loop built on population data.",
+        14, NAVYBOD)]], line_spacing=1.2)
 
-# left: three reasons
-reasons = [
-    ("Purpose-built for cancer screening", "Amigo already runs population-scale cancer focus areas — prostate risk-stratification is a natural extension, not a new build."),
-    ("From test to standard-of-care", "Agents close every gap in the IsoPSA journey: find the patient, prompt the order, prove the outcome."),
-    ("Proven, compliant, fast", "22.2x ROI, deployment in ~6 weeks, and SOC 2 / HIPAA / GDPR out of the box."),
-]
-cw, x0, y0 = 7.1, 0.55, 2.15
-for i, (h, d) in enumerate(reasons):
-    y = y0 + i * 1.35
-    card(s, x0, y, cw, 1.2, accent=True)
-    txt(s, x0 + 0.3, y + 0.2, 0.7, 0.7, [[R(f"{i+1}", 30, SKY, True, SERIF)]], anchor=MSO_ANCHOR.MIDDLE)
-    txt(s, x0 + 1.05, y + 0.18, cw - 1.3, 0.4, [[R(h, 14, NAVY, True)]])
-    txt(s, x0 + 1.05, y + 0.58, cw - 1.3, 0.55, [[R(d, 11, INK)]], line_spacing=1.02)
+inv = [("WHY AMIGO", "Purpose-built for population-scale cancer screening — prostate risk-stratification is an extension, not a new build."),
+       ("WHAT'S NEXT", "A workshop to scope eligible-patient criteria, then a first agent live on real data in ~6 weeks."),
+       ("CONTACT", "elzoghby.elaf@amigo.ai")]
+cw, gx, x0, iy = 3.86, 0.16, 0.72, 4.75
+for i, (lab, d) in enumerate(inv):
+    x = x0 + i * (cw + gx)
+    txt(s, x, iy, cw, 0.3, [[R(lab, 10, PEACH, False, MONO)]], spc=1.5)
+    col = PEACH if lab == "CONTACT" else NAVYBOD
+    fnt = MONO if lab == "CONTACT" else SANS
+    txt(s, x, iy + 0.32, cw - 0.15, 1.1, [[R(d, 10.5 if lab != "CONTACT" else 11, col, False, fnt)]],
+        line_spacing=1.1)
 
-# right: CTA panel
-cta = rect(s, 8.0, 2.15, 4.78, 4.05, radius=0.05)
-_set_grad(cta, NAVY, SKY, 60); cta.line.fill.background(); _shadow(cta, blur=0.1, dist=0.05, alpha=80)
-txt(s, 8.3, 2.6, 4.2, 0.4, [[R("READY TO TRANSFORM", 12, PALEBLUE, True)]], align=PP_ALIGN.CENTER)
-txt(s, 8.2, 3.0, 4.4, 1.3,
-    [[R("Prostate cancer", 22, WHITE, True)], [R("detection at", 22, WHITE, True)], [R("national scale", 22, WHITE, True)]],
-    align=PP_ALIGN.CENTER, line_spacing=1.02, space_after=0)
-btn = rect(s, 8.75, 4.75, 3.28, 0.6, radius=0.5)
-btn.fill.solid(); btn.fill.fore_color.rgb = WHITE; btn.line.fill.background(); _shadow(btn, blur=0.05, dist=0.03, alpha=80)
-txt(s, 8.75, 4.77, 3.28, 0.56, [[R("Let's Meet  →", 15, NAVY, True)]], align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
-txt(s, 8.3, 5.55, 4.2, 0.35, [[R("elzoghby.elaf@amigo.ai", 12, WHITE, True)]], align=PP_ALIGN.CENTER)
-txt(s, 8.3, 5.9, 4.2, 0.3, [[R("Predict.  Prevent.  Act.", 11, PALEBLUE, False, SANS, True)]], align=PP_ALIGN.CENTER)
+txt(s, 0.72, 6.35, 11, 0.5,
+    [[R("Let's build the screening engine for prostate cancer.  ", 18, NAVYTXT, False, SERIF),
+      R("amigo.ai", 18, PEACH, False, SERIF)]])
+txt(s, 0.7, SH - 0.52, 6, 0.3, [[R("AMIGO · CONFIDENTIAL", 9, NAVYBOD, False, MONO)]], spc=1.5)
 
-footer(s, 8)
 
 out = "Amigo_x_ClevelandDiagnostics.pptx"
 prs.save(out)
